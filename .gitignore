@@ -1,0 +1,7 @@
+﻿out/
+__pycache__/
+*.pyc
+logs/
+last_crash.txt
+code.json
+log_*.txt

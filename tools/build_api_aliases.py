@@ -1,0 +1,422 @@
+import json
+import re
+from pathlib import Path
+
+CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
+OUT_API = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
+TRANSLATIONS_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\tools\action_translations.json")
+TRANSLATIONS_BY_ID_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\tools\action_translations_by_id.json")
+
+
+def strip_colors(text: str) -> str:
+    if not text:
+        return ""
+    text = re.sub(r"\u00a7.", "", text)
+    text = re.sub(r"[\x00-\x1f]", "", text)
+    # Fix common mojibake where cp1251 bytes were decoded as latin-1 (àáâ...)
+    text = text.translate(
+        str.maketrans(
+            {
+                "à": "а",
+                "á": "б",
+                "â": "в",
+                "ã": "г",
+                "ä": "д",
+                "å": "е",
+                "¸": "ё",
+                "æ": "ж",
+                "ç": "з",
+                "è": "и",
+                "é": "й",
+                "ê": "к",
+                "ë": "л",
+                "ì": "м",
+                "í": "н",
+                "î": "о",
+                "ï": "п",
+                "ð": "р",
+                "ñ": "с",
+                "ò": "т",
+                "ó": "у",
+                "ô": "ф",
+                "õ": "х",
+                "ö": "ц",
+                "÷": "ч",
+                "ø": "ш",
+                "ù": "щ",
+                "ú": "ъ",
+                "û": "ы",
+                "ü": "ь",
+                "ý": "э",
+                "þ": "ю",
+                "ÿ": "я",
+                "À": "А",
+                "Á": "Б",
+                "Â": "В",
+                "Ã": "Г",
+                "Ä": "Д",
+                "Å": "Е",
+                "¨": "Ё",
+                "Æ": "Ж",
+                "Ç": "З",
+                "È": "И",
+                "É": "Й",
+                "Ê": "К",
+                "Ë": "Л",
+                "Ì": "М",
+                "Í": "Н",
+                "Î": "О",
+                "Ï": "П",
+                "Ð": "Р",
+                "Ñ": "С",
+                "Ò": "Т",
+                "Ó": "У",
+                "Ô": "Ф",
+                "Õ": "Х",
+                "Ö": "Ц",
+                "×": "Ч",
+                "Ø": "Ш",
+                "Ù": "Щ",
+                "Ú": "Ъ",
+                "Û": "Ы",
+                "Ü": "Ь",
+                "Ý": "Э",
+                "Þ": "Ю",
+                "ß": "Я",
+            }
+        )
+    )
+    return text
+
+
+_TRANSLIT = {
+    "а": "a",
+    "б": "b",
+    "в": "v",
+    "г": "g",
+    "д": "d",
+    "е": "e",
+    "ё": "e",
+    "ж": "zh",
+    "з": "z",
+    "и": "i",
+    "й": "y",
+    "к": "k",
+    "л": "l",
+    "м": "m",
+    "н": "n",
+    "о": "o",
+    "п": "p",
+    "р": "r",
+    "с": "s",
+    "т": "t",
+    "у": "u",
+    "ф": "f",
+    "х": "h",
+    "ц": "ts",
+    "ч": "ch",
+    "ш": "sh",
+    "щ": "sch",
+    "ъ": "",
+    "ы": "y",
+    "ь": "",
+    "э": "e",
+    "ю": "yu",
+    "я": "ya",
+}
+
+CYR_TRANSLIT = {
+    "а": "a",
+    "б": "b",
+    "в": "v",
+    "г": "g",
+    "д": "d",
+    "е": "e",
+    "ё": "e",
+    "ж": "zh",
+    "з": "z",
+    "и": "i",
+    "й": "y",
+    "к": "k",
+    "л": "l",
+    "м": "m",
+    "н": "n",
+    "о": "o",
+    "п": "p",
+    "р": "r",
+    "с": "s",
+    "т": "t",
+    "у": "u",
+    "ф": "f",
+    "х": "h",
+    "ц": "ts",
+    "ч": "ch",
+    "ш": "sh",
+    "щ": "sch",
+    "ъ": "",
+    "ы": "y",
+    "ь": "",
+    "э": "e",
+    "ю": "yu",
+    "я": "ya",
+}
+
+
+def translit(text: str) -> str:
+    out = []
+    for ch in text.lower():
+        out.append(CYR_TRANSLIT.get(ch, _TRANSLIT.get(ch, ch)))
+    return "".join(out)
+
+
+def snake(text: str) -> str:
+    t = strip_colors(text)
+    t = translit(t)
+    t = t.replace("(", " ").replace(")", " ")
+    t = re.sub(r"[^a-z0-9]+", "_", t.lower()).strip("_")
+    if not t:
+        return "unnamed"
+    if t[0].isdigit():
+        t = "a_" + t
+    return t
+
+
+def rus_ident(text: str) -> str:
+    t = strip_colors(text)
+    t = t.strip().lower()
+    t = t.replace("(", " ").replace(")", " ")
+    # keep cyrillic/latin/digits/underscore, replace everything else with _
+    t = re.sub(r"[^\w\u0400-\u04FF]+", "_", t)
+    t = re.sub(r"_+", "_", t).strip("_")
+    return t or "unnamed"
+
+
+def module_for_sign1(sign1: str) -> str:
+    s = strip_colors(sign1).strip().lower()
+    # draft mapping; tweak later
+    if "действие игрока" in s:
+        return "player"
+    if "игровое действие" in s:
+        return "game"
+    if "выбрать объект" in s:
+        return "select"
+    if "массив" in s:
+        return "array"
+    if "присв" in s or "установить переменную" in s or "переменную" == s:
+        return "var"
+    if s.startswith("если "):
+        if "игра" in s:
+            return "if_game"
+        if "игрок" in s:
+            return "if_player"
+        if "существо" in s or "существ" in s or "моб" in s or "сущ" in s:
+            return "if_entity"
+        if "значение" in s or "значен" in s or "переменная" in s or "перемен" in s:
+            return "if_value"
+        return "if"
+    return "misc"
+
+def extract_description(action: dict) -> str:
+    raw = action.get("subitem") or action.get("category") or ""
+    raw = strip_colors(raw)
+    raw = raw.replace("\\n", "\n")
+    if " | " in raw:
+        raw = raw.split(" | ", 1)[1]
+    raw = raw.strip()
+    raw = re.sub(r"\n{3,}", "\n\n", raw)
+    return raw
+
+
+def extract_description_raw(action: dict) -> str:
+    raw = action.get("subitem") or action.get("category") or ""
+    raw = raw.replace("\\n", "\n")
+    if " | " in raw:
+        raw = raw.split(" | ", 1)[1]
+    raw = raw.strip()
+    raw = re.sub(r"\n{3,}", "\n\n", raw)
+    return raw
+
+
+def guess_param_base(arg: dict) -> str:
+    name = strip_colors(arg.get("glassName", "")).lower()
+    mode = (arg.get("mode") or "").lower()
+    if "динамическ" in name or "переменн" in name:
+        return "var"
+    if "текст" in name:
+        return "text"
+    if "числ" in name:
+        return "num"
+    if mode == "location":
+        return "loc"
+    if mode == "array":
+        return "arr"
+    if mode == "any":
+        return "value"
+    return mode or "arg"
+
+
+def build_params(action: dict) -> list[dict]:
+    params = []
+    used = {}
+    for arg in action.get("args", []):
+        base = guess_param_base(arg)
+        used.setdefault(base, 0)
+        used[base] += 1
+        name = base if used[base] == 1 else f"{base}{used[base]}"
+        params.append({"name": name, "mode": arg.get("mode"), "slot": arg.get("argSlot")})
+    return params
+
+
+def build_params_fallback(sign1: str, sign2: str) -> list[dict] | None:
+    """
+    Some records in regallactions_export.txt can have broken chest snapshots (e.g. cached category menu
+    instead of params chest). For a few high-value actions, provide a pragmatic fallback slot map so the
+    DSL compiler can still generate useful /placeadvanced commands.
+    """
+    s1 = strip_colors(sign1).strip().lower()
+    s2 = strip_colors(sign2).strip().lower()
+
+    # Player action: "Сообщение" (Send message)
+    # Common params chest layout matches other "text(ы)" actions: 8 text slots around the center.
+    if s1 == "действие игрока" and s2 == "сообщение":
+        slots = [27, 28, 29, 30, 32, 33, 34, 35]
+        return [
+            {"name": "text" if i == 0 else f"text{i+1}", "mode": "TEXT", "slot": slot}
+            for i, slot in enumerate(slots)
+        ]
+
+    return None
+
+
+def guess_enum_name(enum_item: dict) -> str:
+    n = strip_colors(enum_item.get("name", "")).lower()
+    if "синхрон" in n or "асинхрон" in n:
+        return "async"
+    if "запуск" in n and "функц" in n:
+        return "async"
+    if "раздел" in n:
+        return "separator"
+    if "учитывать" in n and "пуст" in n:
+        return "include_empty"
+    return snake(enum_item.get("name", ""))[:32]
+
+
+def englishish_alias(text: str) -> str:
+    s = strip_colors(text).strip().lower()
+    replacements = [
+        ("сообщение", "message"),
+        ("выдать", "give"),
+        ("установить", "set"),
+        ("присв", "set"),
+        ("удалить", "remove"),
+        ("телепорт", "teleport"),
+        ("урон", "damage"),
+        ("исцел", "heal"),
+        ("предмет", "item"),
+        ("инвентарь", "inventory"),
+        ("брон", "armor"),
+        ("функц", "function"),
+    ]
+    for a, b in replacements:
+        s = s.replace(a, b)
+    return snake(s)
+
+
+def parse_item_display_name(raw: str) -> str:
+    """
+    catalog 'subitem' looks like:
+      [minecraft:quartz_stairs meta=0] §cСравнить числа | §7...
+    We need the clickable menu name: "Сравнить числа".
+    """
+    if not raw:
+        return ""
+    s = strip_colors(raw)
+    if "]" in s:
+        s = s.split("]", 1)[1]
+    s = s.strip()
+    if "|" in s:
+        s = s.split("|", 1)[0].strip()
+    return s
+
+
+def load_translations():
+    merged = {}
+    # Autogenerated by-id translations are a baseline; manual translations override them.
+    for path in [TRANSLATIONS_BY_ID_PATH, TRANSLATIONS_PATH]:
+        if not path.exists():
+            continue
+        try:
+            with open(path, encoding="utf-8") as f:
+                merged.update(json.load(f))
+        except Exception:
+            continue
+    return merged
+
+
+def build_enums(action: dict) -> list[dict]:
+    out = []
+    for enum_item in action.get("enums", []):
+        var = enum_item.get("variant") or {}
+        options = var.get("options") or []
+        out.append(
+            {
+                "name": guess_enum_name(enum_item),
+                "slot": enum_item.get("slot"),
+                "options": {strip_colors(o).strip(): i for i, o in enumerate(options)},
+            }
+        )
+    return out
+
+
+def main():
+    catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    api: dict[str, dict[str, dict]] = {}
+    collisions: dict[str, int] = {}
+    translations = load_translations()
+
+    for action in catalog:
+        signs = action.get("signs") or ["", "", "", ""]
+        sign1 = strip_colors(signs[0]).strip()
+        sign2 = strip_colors(signs[1]).strip()
+        gui = strip_colors(action.get("gui", "")).strip()
+        menu = parse_item_display_name(action.get("subitem", ""))
+        action_id = action.get("id", "")
+        module = module_for_sign1(sign1)
+        func = snake(sign2 or gui)
+
+        api.setdefault(module, {})
+        canonical = translations.get(action_id) or translations.get(f"{module}.{func}") or {}
+        name_override = canonical.get("name")
+        alias_override = canonical.get("aliases") or []
+        final_name = name_override or func
+        if final_name in api[module]:
+            collisions.setdefault(f"{module}.{final_name}", 0)
+            collisions[f"{module}.{final_name}"] += 1
+            final_name = f"{final_name}_{collisions[f'{module}.{final_name}']}"
+        api[module][final_name] = {
+            "id": action.get("id"),
+            "sign1": sign1,
+            "sign2": sign2,
+            "gui": gui,
+            "menu": menu,
+            "aliases": sorted(
+                {
+                    final_name,
+                    *alias_override,
+                    englishish_alias(sign2 or gui),
+                    rus_ident(sign2 or gui),
+                    rus_ident(gui),
+                }
+            ),
+            "description": extract_description(action),
+            "descriptionRaw": extract_description_raw(action),
+            "params": (build_params(action) or (build_params_fallback(sign1, sign2) or [])),
+            "enums": build_enums(action),
+        }
+
+    OUT_API.write_text(json.dumps(api, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {OUT_API} modules={len(api)}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,8 @@
+{
+    "test": [
+        {"token": "PLAIN_VARIABLE", "shell": "i", "value": "diamond"},
+        {"token": "PLAIN_VARIABLE", "shell": "i", "value": "gold_ingot"}
+    ],
+    "test2": {"token": "PLAIN_VARIABLE", "shell": "i", "value": "diamond"},
+    "privetstvie": {"token": "STRING", "shell": null, "value": "&c&lОшибка"}
+}

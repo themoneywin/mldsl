@@ -1,0 +1,97 @@
+{
+  "name": "mldsl-helper",
+  "displayName": "MLDSL Helper",
+  "description": "Completion/hover/definition for MLDSL based on generated api_aliases.json",
+  "version": "0.0.10",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:mldsl",
+    "onStartupFinished"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "mldsl",
+        "aliases": [
+          "MLDSL"
+        ],
+        "extensions": [
+          ".mldsl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mldsl",
+        "scopeName": "source.mldsl",
+        "path": "./syntaxes/mldsl.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "title": "MLDSL Helper",
+      "properties": {
+        "mldsl.apiAliasesPath": {
+          "type": "string",
+          "default": "C:\\\\Users\\\\ASUS\\\\Documents\\\\mlctmodified\\\\out\\\\api_aliases.json",
+          "description": "Path to generated api_aliases.json"
+        },
+        "mldsl.docsRoot": {
+          "type": "string",
+          "default": "C:\\\\Users\\\\ASUS\\\\Documents\\\\mlctmodified\\\\out\\\\docs",
+          "description": "Root folder with generated markdown docs"
+        },
+        "mldsl.pythonPath": {
+          "type": "string",
+          "default": "python",
+          "description": "Python executable used to run the compiler (e.g. python, py, C:\\\\Python313\\\\python.exe)"
+        },
+        "mldsl.compilerPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to tools/mldsl_compile.py (leave empty to auto-detect from workspace root)"
+        },
+        "mldsl.planPath": {
+          "type": "string",
+          "default": "",
+          "description": "Where to write plan.json (leave empty for %APPDATA%\\\\.minecraft\\\\plan.json)"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "mldsl.reloadApi",
+        "title": "MLDSL: Reload API Aliases"
+      },
+      {
+        "command": "mldsl.compileAndCopy",
+        "title": "MLDSL: Compile & Copy Command(s)"
+      },
+      {
+        "command": "mldsl.compilePlan",
+        "title": "MLDSL: Compile to plan.json"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "mldsl.compileAndCopy",
+          "when": "resourceLangId == mldsl",
+          "group": "navigation"
+        },
+        {
+          "command": "mldsl.compilePlan",
+          "when": "resourceLangId == mldsl",
+          "group": "navigation"
+        }
+      ]
+    }
+  }
+}

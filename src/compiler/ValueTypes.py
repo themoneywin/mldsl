@@ -1,0 +1,16 @@
+class ValueTypes:
+
+    STRING = "STRING"
+    TEXT_COMPONENT = "TEXT_COMPONENT"
+    ARRAY = "ARRAY"
+    NUMBER = "NUMBER"
+
+    LOCATION = "LOCATION"
+    VARIABLE = "VARIABLE"
+    ITEM = "ITEM"
+
+    GAME_VALUE = "GAME_VALUE"
+    POTION = "POTION"
+    PARTICLE = "PARTICLE"
+
+    NONE = "NONE"

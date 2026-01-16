@@ -1,0 +1,28 @@
+event(join) {
+    player.message("You have joined the game!")
+    hello()
+}
+event(leave) {
+    player.message("You have left the game. Your name is %selected%")
+    hello()
+    save %player%first = "hi"
+    awdw ~ hello 
+    hello ~ 1 + 2
+}
+loop test 5 {
+    message("This is a test message every 5 seconds.")
+}
+event(Правой) {
+    if_player.приседает {
+        player.message("You pressed the right key while sneaking!")
+    }
+}
+func(hello) {
+    %selected%counter = %selected%counter + 1
+    if %selected%counter < 2 {
+        if 2 < 4 {
+        player.message("Hello, %selected%! %var(%selected%counter)%")
+    }
+}
+    call(func, async=true)
+}
