@@ -24,6 +24,12 @@ from src.utils.LogUtil import *
 
 colorama.init() # для windows
 
+# Fix encoding for Windows console
+import sys
+import io
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
 def compile_code(file_path):
     timestart = time.time()
     try:
@@ -110,3 +116,4 @@ def debugBuild(file, tokens, nodes, units, result, timeStart, timeEnd):
 compile_code(file)
 print(colorama.Fore.GREEN + "Компиляция завершена")
 input(colorama.Fore.GREEN + "Нажми ENTER для завершения")
+

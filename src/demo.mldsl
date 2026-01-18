@@ -1,0 +1,38 @@
+/*
+Простой пример MLCT с условиями для игрока
+*/
+
+event(join) {
+    // Проверка состояния игрока
+    if_player.issprinting() {
+        player.message("Привет! Ты в игре.");
+    }
+    
+    // Проверка наличия предмета
+    if_player.hasitem("minecraft:torch") {
+        player.message("У тебя фонарь!");
+    } else if (
+        if_player.hasitem("minecraft:diamond", "minecraft:iron_ingot") || 
+        if_player.hasitem("minecraft:emerald")
+    ) {
+        player.message("Ты имеет ресурсы для строительства!");
+    }
+    
+    // Проверка режима игры
+    if_player.gamemodeequals("survival") {
+        player.message("Игра в выживании.");
+    } else if (
+        if_player.gamemodeequals("creative") || 
+        if_player.gamemodeequals("peaceful")
+    ) {
+        player.message("Ты в творческом или мирном режиме.");
+    }
+    
+    // Проверка наличия блоков
+    if (
+        if_game.blockequals("minecraft:stone", "minecraft:dirt") || 
+        if_game.containerhasitem("minecart", "minecraft:coal")
+    ) {
+        player.message("Вокзал для строительства!");
+    }
+}

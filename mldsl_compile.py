@@ -208,9 +208,9 @@ ASSIGN_RE = re.compile(
 )
 SAVE_SHORTHAND_RE = re.compile(rf"^\s*({NAME_RE})\s*~\s*(.+?)\s*;?\s*$", re.I)
 
-IFPLAYER_RE = re.compile(r"^\s*if_?player\.([\w\u0400-\u04FF]+)\s*\((.*)\)\s*\{\s*$", re.I)
+IFPLAYER_RE = re.compile(r"^\s*if_?player\.([\w\u0400-\u04FF]+)(?:\s*\((.*)\))?\s*\{\s*$", re.I)
 SELECTOBJECT_IFPLAYER_RE = re.compile(r"^\s*SelectObject\.player\.IfPlayer\.([\w\u0400-\u04FF]+)\s*\{\s*$", re.I)
-IFGAME_RE = re.compile(r"^\s*if_?game\.([\w\u0400-\u04FF]+)\s*\((.*)\)\s*\{\s*$", re.I)
+IFGAME_RE = re.compile(r"^\s*if_?game\.([\w\u0400-\u04FF]+)(?:\s*\((.*)\))?\s*\{\s*$", re.I)
 IFGAME_OLD_RE = re.compile(r"^\s*IfGame\.([\w\u0400-\u04FF]+)\s*\{\s*$", re.I)
 IF_RE = re.compile(r"^\s*if\s+(.+?)\s*\{\s*$", re.I)
 IFTEXT_RE = re.compile(r"^\s*iftext\s+(.+?)\s*\{\s*$", re.I)

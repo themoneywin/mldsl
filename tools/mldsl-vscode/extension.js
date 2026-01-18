@@ -53,7 +53,10 @@ function buildLookup(api) {
 
 function findModuleAndPrefix(lineText, positionChar) {
   const left = lineText.slice(0, positionChar);
-  const re = /([a-zA-Z_\u0400-\u04FF][\w\u0400-\u04FF]*)\.([\w\u0400-\u04FF]*)/g;
+  
+  // Поддержка нового синтаксиса: if_player.function(), if_game.function()
+  // Поддержка старого синтаксиса: SelectObject.player.IfPlayer.Function
+  const re = /([a-zA-Z_\u0400-\u04FF][\w\u0400-\u04FF]*(?:\.[a-zA-Z_\u0400-\u04FF][\w\u0400-\u04FF]*)*)\.([\w\u0400-\u04FF]*)/g;
   let m;
   let last = null;
   while ((m = re.exec(left))) {
@@ -62,12 +65,21 @@ function findModuleAndPrefix(lineText, positionChar) {
   if (!last) return null;
   // only trigger when cursor is right after the match
   if (last.end !== left.length) return null;
-  return { module: last.module, prefix: last.prefix };
+  
+  // Нормализация модуля для старого синтаксиса
+  let normalizedModule = last.module;
+  if (normalizedModule === "SelectObject.player.IfPlayer") {
+    normalizedModule = "if_player";
+  } else if (normalizedModule === "IfGame") {
+    normalizedModule = "if_game";
+  }
+  
+  return { module: normalizedModule, prefix: last.prefix };
 }
 
 function findQualifiedAtPosition(document, position) {
   const line = document.lineAt(position.line).text;
-  const re = /([a-zA-Z_\u0400-\u04FF][\w\u0400-\u04FF]*)\.([\w\u0400-\u04FF]+)/g;
+  const re = /([a-zA-Z_\u0400-\u04FF][\w\u0400-\u04FF]*(?:\.[a-zA-Z_\u0400-\u04FF][\w\u0400-\u04FF]*)*)\.([\w\u0400-\u04FF]+)/g;
   let m;
   while ((m = re.exec(line))) {
     const start = m.index;
@@ -77,7 +89,16 @@ function findQualifiedAtPosition(document, position) {
         new vscode.Position(position.line, start),
         new vscode.Position(position.line, end)
       );
-      return { module: m[1], func: m[2], range, text: m[0] };
+      
+      // Нормализация модуля для старого синтаксиса
+      let normalizedModule = m[1];
+      if (normalizedModule === "SelectObject.player.IfPlayer") {
+        normalizedModule = "if_player";
+      } else if (normalizedModule === "IfGame") {
+        normalizedModule = "if_game";
+      }
+      
+      return { module: normalizedModule, func: m[2], range, text: m[0] };
     }
   }
   return null;
@@ -377,7 +398,44 @@ function activate(context) {
         const id = ++seq;
         const line = document.lineAt(position.line).text;
         const info = findModuleAndPrefix(line, position.character);
+        
+        // Автодополнение для ключевых слов if_player и if_game
         if (!info) {
+          const wordRange = document.getWordRangeAtPosition(position, /[a-zA-Z_][a-zA-Z0-9_]*/);
+          if (wordRange) {
+            const word = document.getText(wordRange);
+            if (word.startsWith("if_")) {
+              const items = [];
+              if ("if_player".startsWith(word)) {
+                const item = new vscode.CompletionItem("if_player", vscode.CompletionItemKind.Keyword);
+                item.detail = "Проверка условий игрока";
+                item.documentation = "Проверка условий игрока: if_player.function_name(параметры) { ... }";
+                items.push(item);
+              }
+              if ("if_game".startsWith(word)) {
+                const item = new vscode.CompletionItem("if_game", vscode.CompletionItemKind.Keyword);
+                item.detail = "Проверка условий игры";
+                item.documentation = "Проверка условий игры: if_game.function_name(параметры) { ... }";
+                items.push(item);
+              }
+              if ("SelectObject.player.IfPlayer".startsWith(word)) {
+                const item = new vscode.CompletionItem("SelectObject.player.IfPlayer", vscode.CompletionItemKind.Keyword);
+                item.detail = "Старый синтаксис проверки условий игрока";
+                item.documentation = "Старый синтаксис: SelectObject.player.IfPlayer.FunctionName { ... }";
+                items.push(item);
+              }
+              if ("IfGame".startsWith(word)) {
+                const item = new vscode.CompletionItem("IfGame", vscode.CompletionItemKind.Keyword);
+                item.detail = "Старый синтаксис проверки условий игры";
+                item.documentation = "Старый синтаксис: IfGame.FunctionName { ... }";
+                items.push(item);
+              }
+              if (items.length > 0) {
+                output.appendLine(`[completion#${id}] keyword completion for '${word}' items=${items.length}`);
+                return items;
+              }
+            }
+          }
           output.appendLine(`[completion#${id}] no module prefix match`);
           return;
         }

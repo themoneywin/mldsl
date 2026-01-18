@@ -1,0 +1,12 @@
+{
+  "project": "MLCT",
+  "version": "1.0",
+  "tools_demonstrated": [
+    "read_file",
+    "write_file",
+    "terminal",
+    "search",
+    "edit"
+  ],
+  "timestamp": "2026-01-17"
+}

@@ -10,6 +10,14 @@
       "match": "\\b(event|if|else|loop|function|return|pass)\\b"
     },
     {
+      "name": "keyword.control.condition.mldsl",
+      "match": "\\b(if_player|if_game)\\b"
+    },
+    {
+      "name": "entity.name.function.mldsl",
+      "match": "\\b(SelectObject\\.player\\.IfPlayer|IfGame)\\b"
+    },
+    {
       "name": "string.quoted.double.mldsl",
       "begin": "\"",
       "end": "\"",

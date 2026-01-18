@@ -35,6 +35,12 @@
         "path": "./syntaxes/mldsl.tmLanguage.json"
       }
     ],
+    "snippets": [
+      {
+        "language": "mldsl",
+        "path": "./snippets.json"
+      }
+    ],
     "configuration": {
       "title": "MLDSL Helper",
       "properties": {

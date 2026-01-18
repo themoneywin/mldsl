@@ -4,13 +4,13 @@ import colorama
 askFileName = False
 
 # Стандартный путь файла
-path_file = "code.txt"
+path_file = "test_if_player.txt"
 
 # Количество отступов в json файле
 spaces = 4
 
 # Показ дебага в консоль: True/False
-debugConsole = False
+debugConsole = True
 
 # Запись дебага в файл 'logs/log_.._.._...txt': True/False
 debugDump = True
@@ -28,4 +28,5 @@ ver_protocol = 1
 
 colorama.init()
 if askFileName:
-    path_file = input(colorama.Fore.YELLOW + "Введите имя файла: "+ colorama.Fore.RESET)
+    path_file = input(colorama.Fore.YELLOW + "Введите имя файла: " + colorama.Fore.RESET)
+

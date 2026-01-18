@@ -1,0 +1,3 @@
+PlayerEvent(Join) {
+    PlayerAction.Message("Тест!");
+}

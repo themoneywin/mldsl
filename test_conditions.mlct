@@ -1,0 +1,21 @@
+event(game_start) {
+    // Пример использования нового синтаксиса if_player
+    if_player.issprinting() {
+        player.message("Player is sprinting!");
+    }
+    
+    // Другой пример с if_player
+    if_player.issneaking() {
+        player.message("Player is sneaking!");
+    }
+    
+    // Пример с if_game (новый синтаксис с параметрами)
+    if_game.blockequals("minecraft:stone", "0 0 0") {
+        player.message("Game condition!");
+    }
+    
+    // Пример со старым синтаксисом IfGame (без параметров)
+    IfGame.BlockEquals {
+        player.message("Old syntax game condition!");
+    }
+}

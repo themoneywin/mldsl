@@ -1,0 +1,38 @@
+{
+  "if_player": {
+    "prefix": "if_player",
+    "body": [
+      "if_player.$1($2) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Проверка условия игрока"
+  },
+  "if_game": {
+    "prefix": "if_game",
+    "body": [
+      "if_game.$1($2) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Проверка условия игры"
+  },
+  "SelectObject.player.IfPlayer": {
+    "prefix": "SelectObject.player.IfPlayer",
+    "body": [
+      "SelectObject.player.IfPlayer.$1 {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Старый синтаксис проверки условий игрока"
+  },
+  "IfGame": {
+    "prefix": "IfGame",
+    "body": [
+      "IfGame.$1 {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Старый синтаксис проверки условий игры"
+  }
+}

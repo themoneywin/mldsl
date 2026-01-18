@@ -1,0 +1,10 @@
+event(вход) {
+    hello ~ 1 / 2
+    if_player.bezhit {
+        message("hi")
+    }
+    
+}
+function hello {
+    message("hi")
+}
