@@ -10,6 +10,7 @@
 - Decide event syntax and action namespace: `event(join) { player.message(...) }`
 - Improve error messages: show which line failed + near-token
 - Decide strategy for `/placeadvanced` 240-char limit (for now: hard error)
+- Docs site (RU-first): MkDocs Material + GitHub Pages, generate tracked `docs/` (don't rely on ignored `out/`)
 
 ## Later
 - Improve English names in `tools/action_translations_by_id.json`

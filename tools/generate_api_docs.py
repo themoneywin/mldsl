@@ -161,6 +161,8 @@ def copy_quickstarts(out_dir: Path) -> list[str]:
     copied = []
     out_root = out_dir.parent
     candidates = [
+        (Path(__file__).resolve().parents[1] / "docs" / "QUICKSTART.md", out_dir / "QUICKSTART.md"),
+        (Path(__file__).resolve().parents[1] / "docs" / "QUICKSTART_RU.md", out_dir / "QUICKSTART_RU.md"),
         (out_root / "language_quickstart.md", out_dir / "QUICKSTART.md"),
         (out_root / "language_quickstart_ru.md", out_dir / "QUICKSTART_RU.md"),
         (out_root / "language_quickstart_rus.md", out_dir / "QUICKSTART_RU.md"),
@@ -187,25 +189,25 @@ def main():
     index_lines = ["# MLDSL API", ""]
     index_lines.append("## Quickstart")
     index_lines.append("")
-    index_lines.append("- English: `QUICKSTART.md`")
+    index_lines.append("- English: [QUICKSTART](QUICKSTART.md)")
     if has_ru_quickstart:
-        index_lines.append("- Русский: `QUICKSTART_RU.md`")
+        index_lines.append("- Русский: [Быстрый старт](QUICKSTART_RU.md)")
     else:
-        index_lines.append("- Русский: (not found) — add `out/language_quickstart_ru.md` to generate it")
+        index_lines.append("- Русский: (not found) — add `docs/QUICKSTART_RU.md` or `out/language_quickstart_ru.md`")
     index_lines.append("")
 
     index_lines.append("## Guides")
     index_lines.append("")
-    index_lines.append("- English: `MLDSL_GUIDE.md`")
+    index_lines.append("- English: [Guide](MLDSL_GUIDE.md)")
     if has_ru_guide:
-        index_lines.append("- Русский: `MLDSL_GUIDE_RU.md`")
+        index_lines.append("- Русский: [Гайд](MLDSL_GUIDE_RU.md)")
     else:
         index_lines.append("- Русский: (not found)")
     index_lines.append("")
 
     index_lines.append("## Full API")
     index_lines.append("")
-    index_lines.append("- `ALL_FUNCTIONS.md`")
+    index_lines.append("- [ALL_FUNCTIONS](ALL_FUNCTIONS.md)")
     index_lines.append("")
     all_lines = [
         "# MLDSL API (All Functions)",
@@ -272,7 +274,7 @@ def main():
             doc_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
             rel = os.path.relpath(doc_path, OUT_DIR)
             rel_md = rel.replace("\\", "/")
-            index_lines.append(f"- `{module_name}.{func_name}` -> `{rel_md}`")
+            index_lines.append(f"- [`{module_name}.{func_name}`]({rel_md})")
 
             all_lines.append(f"## `{module_name}.{func_name}`")
             all_lines.append("")

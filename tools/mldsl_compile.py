@@ -3,6 +3,7 @@ import re
 import argparse
 import ast
 from pathlib import Path
+import sys
 
 API_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
 ALIASES_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\src\assets\Aliases.json")
@@ -12,6 +13,9 @@ MAX_CMD_LEN = 240
 
 def load_api():
     return json.loads(API_PATH.read_text(encoding="utf-8"))
+
+def warn(msg: str) -> None:
+    print(f"[предупреждение] {msg}", file=sys.stderr)
 
 def strip_colors(text: str) -> str:
     if not text:
@@ -894,10 +898,7 @@ def compile_numeric_expression(
     # warn: number of actions used
     if len(flat) > 1:
         extra = len(flat) - 1
-        print(
-            f"[warn] formula for {target_var} compiled into {len(flat)} actions (+{extra})",
-            file=__import__('sys').stderr,
-        )
+        warn(f"формула для {target_var} скомпилирована в {len(flat)} действий (+{extra})")
 
     return flat
 
@@ -933,11 +934,18 @@ def compile_entries(path: Path) -> list[dict]:
     current_loop_ticks = None
     current_actions: list[tuple[str, str, str]] = []
     block_stack: list[str] = []  # nested blocks inside event/func/loop (e.g. if)
+    declared_funcs: set[str] = set()
+    MAX_ACTIONS_WARN = 43
 
     def flush_block():
         nonlocal current_kind, current_name, current_loop_ticks, current_actions
         if not current_kind:
             return
+
+        if len(current_actions) >= MAX_ACTIONS_WARN:
+            kind = current_kind
+            nm = current_name or ""
+            warn(f"строка `{kind}({nm})`: достигнуто {len(current_actions)} действий; возможно придётся разбивать на несколько строк/функций")
 
         if current_kind == "event":
             ev_name = event_variant_to_name(current_name or "")
@@ -964,7 +972,7 @@ def compile_entries(path: Path) -> list[dict]:
         if entries:
             entries.append({"block": "newline"})
 
-    for raw in lines:
+    for line_no, raw in enumerate(lines, start=1):
         line = raw.strip()
         if not line or line.startswith("#"):
             continue
@@ -1200,6 +1208,8 @@ def compile_entries(path: Path) -> list[dict]:
             begin_new_row()
             current_kind = "func"
             current_name = m_fn.group(1)
+            if current_name:
+                declared_funcs.add(str(current_name))
             in_block = True
             continue
         m_lp = LOOP_RE.match(line)
@@ -1222,6 +1232,13 @@ def compile_entries(path: Path) -> list[dict]:
         if builtins:
             for pieces, spec in builtins:
                 args_str = ",".join(pieces)
+                # Warn on calling a function that is not declared in this file.
+                if strip_colors(spec.get("sign2", "")).strip() in ("Вызвать функцию", "call_function"):
+                    m_call = re.search(r"slot\(13\)=text\(([^)]+)\)", args_str)
+                    if m_call:
+                        fn_name = m_call.group(1).strip().strip('"').strip("'")
+                        if fn_name and fn_name not in declared_funcs:
+                            warn(f"строка {line_no}: вызов функции `{fn_name}()` не найден в этом файле (если это функция мира — можно игнорировать)")
                 sign1 = strip_colors(spec.get("sign1", "")).strip()
                 sign2 = spec_menu_name(spec)
                 menu = strip_colors(spec.get("menu", "")).strip()
