@@ -1,7 +1,22 @@
-﻿out/
-__pycache__/
-*.pyc
+out/
 logs/
 last_crash.txt
 code.json
 log_*.txt
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Generated (rebuildable)
+plan.json
+
+# Editor settings (local)
+.vscode/
+
+# Logs/temp
+*.log
+
+# Raw dumps from game (external/large)
+regallactions_export.txt
+allactions.txt

@@ -2,6 +2,8 @@
 
 ## Next
 - `git`: make first commit (repo already init)
+- Fix/lock build chain: `tools/build_actions_catalog.py` must run before `tools/build_api_aliases.py` (ids affect translations)
+- Remove/merge duplicates: root scripts vs `tools/*` (keep `tools/*` as source of truth)
 - DSL compiler: `*.mldsl` -> `/placeadvanced ...` (done, but needs nicer CLI / VS Code task)
 - Use `out/api_aliases.json` for action lookup and slot/enum mapping
 - Add enum sugar: `separator=" "` -> `clicks(slot,n)=0` (done for known enums)

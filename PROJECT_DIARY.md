@@ -535,3 +535,29 @@ IfGame.BlockEquals {
 **Создана документация**: `IF_PLAYER_IF_GAME_SUPPORT.md` с полным списком функций и примерами использования.
 
 **Статус**: ✅ Полностью реализовано и протестировано
+
+---
+
+## 2026-01-20 — Починка сборки API/компилятора (сломались имена действий)
+
+### Симптомы
+- `tools/mldsl_compile.py ...` падал с `ValueError: Unknown action: var.set_quotient` и/или `Unknown action: if_value.number_2`.
+- В `out/api_aliases.json` появлялись имена вроде `var.unnamed_*`, а в `if_value` не было `number_2`.
+
+### Причина
+1) `out/actions_catalog.json` был собран в режиме, где `id` действий стал вида `gen_...` (не полный ключ).
+   - Из‑за этого `tools/action_translations_by_id.json` не матчился (он ожидает ключ `path|category|subitem|gui|sign1|sign2|sign3|sign4`).
+   - В итоге каноничные имена (`if_value.number_2`, и т.п.) не применялись.
+2) Для `var`-операторов `sign2` это символы `= + - * /`, и `snake(sign2)` давал `unnamed`.
+
+### Исправления
+- Пересобирать каталог действий именно через `tools/build_actions_catalog.py` (он пишет полный `id`-ключ).
+- В `tools/build_api_aliases.py` добавлена канонизация `var`-операторов по `sign2`:
+  - `=` → `set_value`, `+` → `set_sum`, `-` → `set_difference`, `*` → `set_product`, `/` → `set_quotient`.
+  - То же изменение продублировано в корневом `build_api_aliases.py` (чтобы не расходились версии).
+
+### Рекомендуемая цепочка сборки (single source of truth)
+1) `python tools/build_actions_catalog.py`
+2) `python tools/build_api_aliases.py`
+3) `python tools/generate_api_docs.py`
+4) Проверка: `python tools/mldsl_compile.py test.mldsl --print-plan`

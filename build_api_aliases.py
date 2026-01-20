@@ -381,7 +381,17 @@ def main():
         menu = parse_item_display_name(action.get("subitem", ""))
         action_id = action.get("id", "")
         module = module_for_sign1(sign1)
-        func = snake(sign2 or gui)
+        var_operator_funcs = {
+            "=": "set_value",
+            "+": "set_sum",
+            "-": "set_difference",
+            "*": "set_product",
+            "/": "set_quotient",
+        }
+        if module == "var" and sign2 in var_operator_funcs:
+            func = var_operator_funcs[sign2]
+        else:
+            func = snake(sign2 or gui)
 
         api.setdefault(module, {})
         canonical = translations.get(action_id) or translations.get(f"{module}.{func}") or {}
