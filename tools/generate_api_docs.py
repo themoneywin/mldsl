@@ -4,6 +4,7 @@ from pathlib import Path
 
 API_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
 OUT_DIR = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\docs")
+CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
 
 
 def md_escape(text: str) -> str:
@@ -157,6 +158,70 @@ This plan is executed by the mod using the existing `/placeadvanced` mechanism.
 
     (out_dir / "MLDSL_GUIDE.md").write_text(guide, encoding="utf-8")
 
+def write_events_ru(out_dir: Path):
+    """
+    Autogenerate PlayerEvent list from actions_catalog.json (regallactions_export).
+    """
+    if not CATALOG_PATH.exists():
+        return
+    try:
+        catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return
+
+    def strip_colors_local(text: str) -> str:
+        import re
+        if not text:
+            return ""
+        text = re.sub(r"\u00a7.", "", text)
+        text = re.sub(r"[\x00-\x1f]", "", text)
+        return text
+
+    def extract_desc(action: dict) -> str:
+        s = action.get("subitem") or ""
+        s = strip_colors_local(s)
+        if "|" in s:
+            parts = s.split("|", 1)
+            if len(parts) == 2:
+                return parts[1].replace("\\n", "\n").strip()
+        return ""
+
+    items = []
+    for a in catalog:
+        signs = a.get("signs") or ["", "", "", ""]
+        sign1 = strip_colors_local(signs[0]).strip()
+        sign2 = strip_colors_local(signs[1]).strip()
+        if sign1 != "Событие игрока" or not sign2:
+            continue
+        items.append((sign2, (a.get("gui") or "").strip(), extract_desc(a)))
+
+    # unique by sign2
+    seen = set()
+    uniq = []
+    for sign2, gui, desc in items:
+        if sign2 in seen:
+            continue
+        seen.add(sign2)
+        uniq.append((sign2, gui, desc))
+
+    lines = ["# События игрока (из regallactions_export)", ""]
+    lines.append("Это список `sign2` для блока `Событие игрока` (diamond_block).")
+    lines.append("В MLDSL можно писать `событие(<имя>) { ... }`.")
+    lines.append("Если имя не найдено в этом списке — компилятор выдаст предупреждение (но всё равно попытается напечатать).")
+    lines.append("")
+
+    for sign2, gui, desc in sorted(uniq, key=lambda x: x[0].lower()):
+        lines.append(f"## `{md_escape(sign2)}`")
+        if gui:
+            lines.append(f"- GUI: `{md_escape(gui)}`")
+        if desc:
+            lines.append("```")
+            lines.append(desc.strip())
+            lines.append("```")
+        lines.append("")
+
+    (out_dir / "EVENTS_RU.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
 def copy_quickstarts(out_dir: Path) -> list[str]:
     copied = []
     out_root = out_dir.parent
@@ -205,6 +270,8 @@ def main():
     else:
         index_lines.append("- Русский: (not found)")
         index_lines.append("- English: [Guide](MLDSL_GUIDE.md)")
+    if CATALOG_PATH.exists():
+        index_lines.append("- Русский: [События игрока](EVENTS_RU.md)")
     index_lines.append("")
 
     index_lines.append("## Full API")
@@ -297,6 +364,7 @@ def main():
 
     (OUT_DIR / "README.md").write_text("\n".join(index_lines) + "\n", encoding="utf-8")
     (OUT_DIR / "ALL_FUNCTIONS.md").write_text("\n".join(all_lines) + "\n", encoding="utf-8")
+    write_events_ru(OUT_DIR)
     print(f"wrote docs to {OUT_DIR}")
 
 

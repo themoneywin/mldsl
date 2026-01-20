@@ -8,6 +8,7 @@ import sys
 API_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
 ALIASES_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\src\assets\Aliases.json")
 ALLACTIONS_PATH = Path(r"C:\Users\ASUS\Documents\allactions.txt")
+CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
 MAX_CMD_LEN = 240
 
 
@@ -26,6 +27,36 @@ def norm_ident(s: str) -> str:
     for ch in ("_", " ", "-", "\t"):
         t = t.replace(ch, "")
     return t
+
+def load_known_player_events() -> dict[str, str]:
+    """
+    Build a lookup for PlayerEvent variants from regallactions export catalog.
+    Returns: norm_ident(sign2) -> canonical sign2 (stripped).
+    """
+    if not CATALOG_PATH.exists():
+        return {}
+    try:
+        catalog = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+    out: dict[str, str] = {}
+    for action in catalog:
+        signs = action.get("signs") or ["", "", "", ""]
+        sign1 = strip_colors(signs[0]).strip()
+        sign2 = strip_colors(signs[1]).strip()
+        if not sign2:
+            continue
+        if sign1 != "Событие игрока":
+            continue
+        out.setdefault(norm_ident(sign2), sign2)
+    # common short aliases
+    for k in list(out.keys()):
+        # "Событие чата" -> "чат"
+        if k.endswith("событиечата") or out[k] == "Событие чата":
+            out.setdefault("чат", out[k])
+            out.setdefault("chat", out[k])
+    return out
 
 def strip_colors(text: str) -> str:
     if not text:
@@ -970,6 +1001,7 @@ def compile_entries(path: Path) -> list[dict]:
     api = load_api()
     sign1_aliases = load_sign1_aliases()
     blocks = load_allactions_map()
+    known_events = load_known_player_events()
 
     def load_with_imports(p: Path, stack: list[Path]) -> list[str]:
         rp = p.resolve()
@@ -1042,7 +1074,16 @@ def compile_entries(path: Path) -> list[dict]:
             warn(f"строка `{kind}({nm})`: достигнуто {len(current_actions)} действий; возможно придётся разбивать на несколько строк/функций")
 
         if current_kind == "event":
-            ev_name = event_variant_to_name(current_name or "")
+            raw_name = current_name or ""
+            # Map common short variants to server names; warn if unknown.
+            ev_name = event_variant_to_name(raw_name)
+            if ev_name == raw_name:
+                nk = norm_ident(raw_name)
+                if nk in known_events:
+                    ev_name = known_events[nk]
+                else:
+                    # allow any event name, but warn if not in exported catalog.
+                    warn(f"неизвестное событие игрока: `{raw_name}` (нет в regallactions_export); печать может не найти его в меню")
             entries.append({"block": "diamond_block", "name": ev_name, "args": "no"})
         elif current_kind == "func":
             entries.append({"block": "lapis_block", "name": (current_name or ""), "args": "no"})
@@ -1405,7 +1446,8 @@ def compile_commands(path: Path) -> list[str]:
 def main():
     try:
         import sys
-        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
 
