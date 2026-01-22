@@ -20,6 +20,9 @@
 
 `/mldsl run "%APPDATA%\\.minecraft\\plan.json"`
 
+Важно: для “печати” нужен мод BetterCode (MLBetterCode):
+- https://github.com/rainbownyashka/mlbettercode
+
 ## 4) Минимальные примеры
 
 ### Событие

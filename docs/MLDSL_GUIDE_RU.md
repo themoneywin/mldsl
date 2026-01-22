@@ -151,3 +151,8 @@ item("stone", count=3, meta=0, name="&aКамушек", description="строк�
 ```
 
 Этот план исполняется модом через `/mldsl run "...\plan.json"`.
+
+## Требования для печати
+
+Для исполнения `plan.json` в игре нужен клиентский мод BetterCode (MLBetterCode):
+- https://github.com/rainbownyashka/mlbettercode
