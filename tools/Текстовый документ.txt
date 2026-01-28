@@ -3,8 +3,8 @@ import re
 from pathlib import Path
 
 # Пути к файлам
-CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
-API_OUT_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
+CATALOG_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\actions_catalog.json")
+API_OUT_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
 
 def strip_colors(text: str) -> str:
     """Удаляет цветовые коды (§c, &4 и т.д.)"""

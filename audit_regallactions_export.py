@@ -2,8 +2,8 @@ import json
 import re
 from pathlib import Path
 
-EXPORT = Path(r"C:\Users\ASUS\AppData\Roaming\.minecraft\regallactions_export.txt")
-OUT_JSON = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\export_audit.json")
+EXPORT = Path(r"C:\Users\trysmile\AppData\Roaming\.minecraft\regallactions_export.txt")
+OUT_JSON = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\export_audit.json")
 
 GLASS = "minecraft:stained_glass_pane"
 ITEM_RE = re.compile(r"^item=slot\s+(\d+):\s+\[([^\s]+)\s+meta=(\d+)\]\s+(.*)$")

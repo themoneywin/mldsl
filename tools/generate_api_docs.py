@@ -2,9 +2,9 @@ import json
 import os
 from pathlib import Path
 
-API_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
-OUT_DIR = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\docs")
-CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
+API_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
+OUT_DIR = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\docs")
+CATALOG_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\actions_catalog.json")
 
 
 def md_escape(text: str) -> str:

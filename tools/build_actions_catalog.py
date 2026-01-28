@@ -2,14 +2,14 @@ import json
 from pathlib import Path
 import importlib.util
 
-EXPORT_PATH = Path(r"C:\Users\ASUS\AppData\Roaming\.minecraft\regallactions_export.txt")
-ALIASES_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\src\assets\Aliases.json")
-OUT_CATALOG = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
-OUT_ALIASES = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\action_aliases.json")
-OUT_DOCS = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\language_quickstart.md")
+EXPORT_PATH = Path(r"C:\Users\trysmile\AppData\Roaming\.minecraft\regallactions_export.txt")
+ALIASES_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\src\assets\Aliases.json")
+OUT_CATALOG = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\actions_catalog.json")
+OUT_ALIASES = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\action_aliases.json")
+OUT_DOCS = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\language_quickstart.md")
 
 
-TOOLS_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\tools\extract_regallactions_args.py")
+TOOLS_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\tools\extract_regallactions_args.py")
 
 def load_module(path: Path):
     spec = importlib.util.spec_from_file_location("extract_regallactions_args", path)

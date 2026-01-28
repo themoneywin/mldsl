@@ -2,8 +2,8 @@ import json
 import re
 from pathlib import Path
 
-CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
-OUT_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\tools\action_translations_by_id.json")
+CATALOG_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\actions_catalog.json")
+OUT_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\tools\action_translations_by_id.json")
 
 
 def strip_colors(text: str) -> str:

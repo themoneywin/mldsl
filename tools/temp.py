@@ -3,8 +3,8 @@ import re
 from pathlib import Path
 
 # ПУТИ
-CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
-API_OUT_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
+CATALOG_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\actions_catalog.json")
+API_OUT_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
 
 # СИСТЕМНЫЕ СВЯЗКИ (Поиск по имени предмета)
 CORE_LOGIC = {

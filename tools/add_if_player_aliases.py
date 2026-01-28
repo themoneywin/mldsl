@@ -6,12 +6,12 @@ from pathlib import Path
 
 def add_if_player_aliases():
     # Загружаем LangTokens.json
-    lang_tokens_path = Path(r"C:\Users\ASUS\Documents\mlctmodified\src\assets\LangTokens.json")
+    lang_tokens_path = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\src\assets\LangTokens.json")
     with open(lang_tokens_path, 'r', encoding='utf-8') as f:
         lang_data = json.load(f)
     
     # Загружаем api_aliases.json
-    api_aliases_path = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
+    api_aliases_path = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
     with open(api_aliases_path, 'r', encoding='utf-8') as f:
         api_data = json.load(f)
     

@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 
 # Пути
-CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
-API_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
+CATALOG_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\actions_catalog.json")
+API_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
 
 def main():
     if not CATALOG_PATH.exists() or not API_PATH.exists():

@@ -4,9 +4,9 @@ import argparse
 import ast
 from pathlib import Path
 
-API_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
-ALIASES_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\src\assets\Aliases.json")
-ALLACTIONS_PATH = Path(r"C:\Users\ASUS\Documents\allactions.txt")
+API_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
+ALIASES_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\src\assets\Aliases.json")
+ALLACTIONS_PATH = Path(r"C:\Users\trysmile\Documents\allactions.txt")
 MAX_CMD_LEN = 240
 
 # Internal stacks for function args/returns. Names must be rare to avoid clashing with user variables in the world.

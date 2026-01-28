@@ -3,9 +3,9 @@ import re
 from pathlib import Path
 
 # Пути
-LANG_TOKENS_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\src\assets\LangTokens.json")
-CATALOG_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\actions_catalog.json")
-API_OUT_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
+LANG_TOKENS_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\src\assets\LangTokens.json")
+CATALOG_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\actions_catalog.json")
+API_OUT_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
 
 # Расширенный словарь для перевода имен, которые трудно перевести транслитом
 # (Английский ключ, который ты хочешь -> Точный текст на русском в игре)

@@ -2,9 +2,9 @@ import json
 import re
 from pathlib import Path
 
-EXPORT_PATH = Path(r"C:\Users\ASUS\AppData\Roaming\.minecraft\regallactions_export.txt")
-ALIASES_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\src\assets\Aliases.json")
-OUT_PATH = Path(r"C:\Users\ASUS\Documents\regallactions_args.json")
+EXPORT_PATH = Path(r"C:\Users\trysmile\AppData\Roaming\.minecraft\regallactions_export.txt")
+ALIASES_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\src\assets\Aliases.json")
+OUT_PATH = Path(r"C:\Users\trysmile\Documents\regallactions_args.json")
 
 GLASS_ID = "minecraft:stained_glass_pane"
 

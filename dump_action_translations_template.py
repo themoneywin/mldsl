@@ -1,8 +1,8 @@
 import json
 from pathlib import Path
 
-API_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\api_aliases.json")
-OUT_PATH = Path(r"C:\Users\ASUS\Documents\mlctmodified\out\action_translations_template.json")
+API_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\api_aliases.json")
+OUT_PATH = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\out\action_translations_template.json")
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
                 "aliases": spec.get("aliases", []),
             }
 
-    existing = Path(r"C:\Users\ASUS\Documents\mlctmodified\tools\action_translations.json")
+    existing = Path(r"C:\Users\trysmile\Documents\GitHub\mldsl\tools\action_translations.json")
     if existing.exists():
         user = json.loads(existing.read_text(encoding="utf-8"))
         for key, custom in user.items():
